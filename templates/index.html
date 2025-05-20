@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Disease Detector</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Plant Disease Detector</h1>
+    <form id="uploadForm">
+      <input type="file" id="imageInput" name="image" accept="image/*" required>
+      <button type="submit">Upload & Predict</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('imageInput');
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        document.getElementById('result').innerText = 
+          data.prediction ? "Prediction: " + data.prediction : "Error: " + data.error;
+      } catch (error) {
+        document.getElementById('result').innerText = "Upload failed. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
